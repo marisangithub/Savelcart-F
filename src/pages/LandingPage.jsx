@@ -193,19 +193,19 @@ useEffect(() => {
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
 
           {/* Top navbar row */}
-          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          <div className="flex items-center justify-between gap-3">
 
             {/* Logo */}
             <a
               href="#home"
               className="flex shrink-0 items-center gap-2"
             >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#294431] text-2xl">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#294431] text-xl sm:h-11 sm:w-11 sm:text-2xl">
                 🐓
               </span>
 
-              <span className="whitespace-nowrap text-xl font-black tracking-tight">
-                Savel <span className="text-[#b85e38]">Selling</span>
+              <span className="whitespace-nowrap text-lg font-black tracking-tight sm:text-xl">
+                Savel<span className="text-[#b85e38]">Cart</span>
               </span>
             </a>
 
@@ -234,7 +234,7 @@ useEffect(() => {
             </nav>
 
             {/* Language and action buttons */}
-            <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <div className="hidden min-w-0 flex-wrap items-center gap-2 lg:flex">
 
               <select
                 value={language}
@@ -357,6 +357,16 @@ useEffect(() => {
 )}
 
 
+<a
+  href="/SavelCart.apk"
+  download="SavelCart.apk"
+  className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg bg-[#b85e38] px-3 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#994727] sm:px-4"
+>
+  <span aria-hidden="true">⬇</span>
+  Download App
+</a>
+
+
               <button
                 type="button"
                 onClick={() => navigate("/sell-bird")}
@@ -367,43 +377,109 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* Secondary navigation for tablet and mobile */}
+          {/* Compact mobile navigation */}
           <div className="mt-3 border-t border-stone-100 pt-3 lg:hidden">
             <button
               type="button"
               onClick={() => setMenuOpen((previous) => !previous)}
               aria-expanded={menuOpen}
               aria-label="Toggle navigation menu"
-              className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold hover:bg-[#edf1e8]"
+              className="flex w-full items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-semibold hover:bg-[#edf1e8]"
             >
-              {menuOpen ? "✕ Close menu" : "☰ Menu"}
+              <span>{menuOpen ? "✕ Close menu" : "☰ Menu"}</span>
+              <span className="text-xs text-stone-500">{menuOpen ? "−" : "+"}</span>
             </button>
 
             {menuOpen && (
-              <nav className="mt-3 flex flex-col gap-1 rounded-xl bg-[#faf9f5] p-2">
-                <a
-                  href="#home"
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-3 text-sm font-medium hover:bg-[#edf1e8]"
-                >
-                  {t.home}
-                </a>
+              <nav className="mt-3 rounded-2xl border border-stone-200 bg-[#faf9f5] p-3 shadow-sm">
+                <div className="grid grid-cols-2 gap-2">
+                  <a href="#home" onClick={() => setMenuOpen(false)} className="rounded-xl px-3 py-3 text-sm font-semibold hover:bg-[#edf1e8]">
+                    {t.home}
+                  </a>
+                  <a href="#categories" onClick={() => setMenuOpen(false)} className="rounded-xl px-3 py-3 text-sm font-semibold hover:bg-[#edf1e8]">
+                    {t.popular}
+                  </a>
+                  <a href="#listings" onClick={() => setMenuOpen(false)} className="rounded-xl px-3 py-3 text-sm font-semibold hover:bg-[#edf1e8]">
+                    {t.browse}
+                  </a>
+                  <select
+                    value={language}
+                    onChange={(event) => {
+                      setLanguage(event.target.value);
+                      setMenuOpen(false);
+                    }}
+                    aria-label="Choose language"
+                    className="min-w-0 rounded-xl border border-stone-300 bg-white px-3 py-3 text-sm"
+                  >
+                    <option value="English">English</option>
+                    <option value="Tamil">தமிழ்</option>
+                    <option value="Thanglish">Thanglish</option>
+                  </select>
+                </div>
 
-                <a
-                  href="#categories"
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-3 text-sm font-medium hover:bg-[#edf1e8]"
-                >
-                  {t.popular}
-                </a>
-
-                <a
-                  href="#listings"
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-3 text-sm font-medium hover:bg-[#edf1e8]"
-                >
-                  {t.browse}
-                </a>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <Link
+                    to="/orders"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-3 text-sm font-semibold"
+                  >
+                    🛒 My Orders
+                  </Link>
+                  {user ? (
+                    <>
+                      <Link
+                        to="/profile"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-3 text-sm font-semibold"
+                      >
+                        👤 {t.profileTitle}
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setAuthError("");
+                          try {
+                            await logoutUser();
+                            setUser(null);
+                            setMenuOpen(false);
+                          } catch (error) {
+                            setAuthError(error.message || "Logout failed. Please try again.");
+                          }
+                        }}
+                        className="rounded-xl border border-red-200 bg-white px-3 py-3 text-sm font-semibold text-red-600"
+                      >
+                        ↪ {t.logout}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/login" onClick={() => setMenuOpen(false)} className="rounded-xl border border-stone-300 bg-white px-3 py-3 text-center text-sm font-semibold">
+                        {t.login}
+                      </Link>
+                      <Link to="/register" onClick={() => setMenuOpen(false)} className="rounded-xl bg-amber-400 px-3 py-3 text-center text-sm font-bold text-stone-950">
+                        {t.register}
+                      </Link>
+                    </>
+                  )}
+                  <a
+                    href="/SavelCart.apk"
+                    download="SavelCart.apk"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 rounded-xl bg-[#b85e38] px-3 py-3 text-center text-sm font-bold text-white"
+                  >
+                    ⬇ Download App
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      navigate("/sell-bird");
+                    }}
+                    className="rounded-xl bg-[#294431] px-3 py-3 text-sm font-bold text-white"
+                  >
+                    + {t.sell}
+                  </button>
+                </div>
               </nav>
             )}
           </div>
@@ -413,13 +489,13 @@ useEffect(() => {
       <main>
         {/* Hero section */}
         <section id="home" className="overflow-hidden">
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-12 md:grid-cols-2 md:py-20 lg:px-8">
+          <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-12 md:grid-cols-2 md:gap-10 md:py-20 lg:px-8">
             <div>
               <span className="inline-flex rounded-full border border-[#d8dfd0] bg-[#edf1e8] px-4 py-2 text-xs font-bold tracking-wider text-[#38583d]">
                 ✦ {t.heroLabel}
               </span>
 
-              <h1 className="mt-6 max-w-2xl text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+              <h1 className="mt-5 max-w-2xl text-3xl font-black leading-tight tracking-tight sm:mt-6 sm:text-4xl md:text-5xl lg:text-6xl">
                 {t.heroTitle}
               </h1>
 
@@ -428,7 +504,7 @@ useEffect(() => {
               </p>
 
               <form
-                className="mt-8 flex max-w-xl flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-3 shadow-lg shadow-stone-200/40 sm:flex-row"
+                className="mt-6 flex w-full max-w-xl flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-3 shadow-lg shadow-stone-200/40 sm:mt-8 sm:flex-row"
                 onSubmit={(event) => {
                   event.preventDefault();
                   document.getElementById("listings")?.scrollIntoView({
@@ -451,10 +527,22 @@ useEffect(() => {
 </Link>
               </form>
 
-              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-stone-500">
-                <span>✓ {t.trust}</span>
-                <span>✓ {t.connect}</span>
-              </div>
+              
+<a
+  href="/SavelCart.apk"
+  download="SavelCart.apk"
+  className="mt-6 inline-flex items-center justify-center gap-3 rounded-xl bg-[#294431] px-6 py-4 font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#1e3324]"
+>
+  <span className="text-xl" aria-hidden="true">📱</span>
+  <span>
+    <span className="block">Download SavelCart</span>
+    <span className="mt-1 block text-xs font-medium text-white/75">
+      Free for Android
+    </span>
+  </span>
+  <span aria-hidden="true">↓</span>
+</a>
+
             </div>
 
             {/* Native breed image showcase */}
@@ -464,7 +552,7 @@ useEffect(() => {
               <img
                 src="https://live.staticflickr.com/7384/12025765045_508ae22568_b.jpg"
                 alt="Native Aseel rooster and hen in Tamil Nadu"
-                className="relative h-[350px] w-full rounded-[2rem] object-cover shadow-xl sm:h-[460px]"
+                className="relative h-[260px] w-full rounded-2xl object-cover shadow-xl sm:h-[350px] sm:rounded-[2rem] md:h-[460px]"
                 onError={(event) => {
                   event.currentTarget.onerror = null;
                   event.currentTarget.src =
@@ -492,7 +580,7 @@ useEffect(() => {
         {/* Bird categories */}
         <section
           id="categories"
-          className="mx-auto max-w-7xl px-5 py-14 lg:px-8"
+          className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8"
         >
           <div className="mb-7">
             <p className="text-sm font-bold uppercase tracking-widest text-[#b85e38]">
@@ -658,7 +746,7 @@ useEffect(() => {
 {/* Browse by District */}
 <section
   id="districts"
-  className="mx-auto max-w-7xl px-5 py-14 lg:px-8"
+  className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8"
 >
   <div className="mb-7">
     <p className="text-sm font-bold uppercase tracking-widest text-[#b85e38]">
@@ -694,7 +782,7 @@ useEffect(() => {
           <div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 sm:flex-row">
             <div>
               <p className="text-xl font-black">
-                Savel Selling 🐓
+                SavelCart 🐓
               </p>
 
               <p className="mt-2 text-sm text-white/70">
@@ -713,7 +801,7 @@ useEffect(() => {
       <button
         type="button"
         onClick={() => navigate("/sell-bird")}
-        className="fixed bottom-5 right-5 z-30 rounded-full bg-[#b85e38] px-6 py-4 font-bold text-white shadow-xl transition hover:-translate-y-1 hover:bg-[#994727]"
+        className="fixed bottom-4 right-3 z-30 rounded-full bg-[#b85e38] px-4 py-3 text-sm font-bold text-white shadow-xl transition hover:-translate-y-1 hover:bg-[#994727] sm:bottom-5 sm:right-5 sm:px-6 sm:py-4 sm:text-base"
       >
         + {t.sell}
       </button>
